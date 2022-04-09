@@ -78,11 +78,11 @@ public class BaseTower : MonoBehaviour
     }
     EnemyHealth FilterTarget()
     {
-        float prioValue = Mathf.Infinity; ;
         EnemyHealth newTarget = null;
         switch (towerInfo.TargetPriority)
         {
             case TargetPriority.Nearest:
+                float prioValue = Mathf.Infinity;
                 for (int i = 0; i < targets.Count; i++)
                 {
                     if (!WallCheck(targets[i].transform))
@@ -100,11 +100,100 @@ public class BaseTower : MonoBehaviour
                     }
                 }
                 break;
-            case TargetPriority.Farest://<-
+            case TargetPriority.Farest:
+                prioValue = 0;
+                for (int i = 0; i < targets.Count; i++)
+                {
+                    if (!WallCheck(targets[i].transform))
+                    {
+                        float dist = Vector3.Distance(targets[i].transform.position, transform.position);
+                        if (dist > prioValue)
+                        {
+                            prioValue = dist;
+                            newTarget = targets[i];
+                        }
+                    }
+                    else if (targets.Count <= 1)
+                    {
+                        return null;
+                    }
+                }
                 break;
-            case TargetPriority.LowestHp://<-
+            case TargetPriority.LowestCurrentHp:
+                prioValue = Mathf.Infinity;
+                for (int i = 0; i < targets.Count; i++)
+                {
+                    if (!WallCheck(targets[i].transform))
+                    {
+                        float health = targets[i].CurrentHealth;
+                        if (health < prioValue)
+                        {
+                            prioValue = health;
+                            newTarget = targets[i];
+                        }
+                    }
+                    else if (targets.Count <= 1)
+                    {
+                        return null;
+                    }
+                }
                 break;
-            case TargetPriority.HighestHp://<-
+            case TargetPriority.HighestCurrentHp:
+                prioValue = 0;
+                for (int i = 0; i < targets.Count; i++)
+                {
+                    if (!WallCheck(targets[i].transform))
+                    {
+                        float health = targets[i].CurrentHealth;
+                        if (health > prioValue)
+                        {
+                            prioValue = health;
+                            newTarget = targets[i];
+                        }
+                    }
+                    else if (targets.Count <= 1)
+                    {
+                        return null;
+                    }
+                }
+                break;
+            case TargetPriority.LowestMaxHp:
+                prioValue = Mathf.Infinity;
+                for (int i = 0; i < targets.Count; i++)
+                {
+                    if (!WallCheck(targets[i].transform))
+                    {
+                        float health = targets[i].MaxHealth;
+                        if (health < prioValue)
+                        {
+                            prioValue = health;
+                            newTarget = targets[i];
+                        }
+                    }
+                    else if (targets.Count <= 1)
+                    {
+                        return null;
+                    }
+                }
+                break;
+            case TargetPriority.HighestMaxHp:
+                prioValue = 0;
+                for (int i = 0; i < targets.Count; i++)
+                {
+                    if (!WallCheck(targets[i].transform))
+                    {
+                        float health = targets[i].MaxHealth;
+                        if (health > prioValue)
+                        {
+                            prioValue = health;
+                            newTarget = targets[i];
+                        }
+                    }
+                    else if (targets.Count <= 1)
+                    {
+                        return null;
+                    }
+                }
                 break;
         }
         return newTarget;
@@ -119,10 +208,9 @@ public class BaseTower : MonoBehaviour
         {
             return false;
         }
-        //return linecast doesnt work...
     }
 
-    void LookAtTarget() //moet rotation speed gebruiken
+    void LookAtTarget()
     {
         RemoveEmptyObjects();
         aimTarget = FilterTarget();
@@ -130,8 +218,8 @@ public class BaseTower : MonoBehaviour
         {
             return;
         }
-        rotation = aimTarget.transform.position - transform.position;
-        transform.rotation = Quaternion.LookRotation(rotation);
+        rotation = aimTarget.transform.position + aimTarget.transform.forward * (aimTarget.EnemyInfo.MovementSpeed / towerInfo.ProjectileSpeed) - transform.position; //werkt meschien?
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotation), towerInfo.RotationSpeed * Time.deltaTime);
 
         if (Time.time > nextAttack)
         {
@@ -141,9 +229,9 @@ public class BaseTower : MonoBehaviour
     }
     void Shoot()
     {
-        GameObject newBullet = Instantiate(bulletPrefab); //projectile origin gebruiken
+        GameObject newBullet = Instantiate(bulletPrefab);
         newBullet.GetComponent<ProjectileBehaviour>().Setup(gameObject);
-        newBullet.transform.rotation = Quaternion.LookRotation(rotation);
+        newBullet.transform.rotation = Quaternion.LookRotation(transform.forward);
         newBullet.GetComponent<Rigidbody>().velocity = newBullet.transform.forward * towerInfo.ProjectileSpeed;
     }
     private void OnDrawGizmos()

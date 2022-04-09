@@ -42,8 +42,10 @@ public enum TargetPriority
 {
     Nearest,
     Farest,
-    LowestHp,
-    HighestHp,
+    LowestCurrentHp,
+    HighestCurrentHp,
+    LowestMaxHp,
+    HighestMaxHp,
 }
 [Serializable]
 public class UseExplosiveProjectiles

@@ -12,14 +12,14 @@ TagManager:
   - Water
   - UI
   - 
+  - Enemy
+  - BaseTower
+  - Tower
+  - Player
+  - Projectile
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - EnemyProjectile
+  - Wall
   - 
   - 
   - 

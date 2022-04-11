@@ -11,8 +11,13 @@ public class EnemyHealth : BaseHealth
     protected override void Setup()
     {
         base.Setup();
-        maxHealth = enemyInfo.MaxHealth;
+        maxHealth = enemyInfo.HealthStats.maxHealth;
         currentHealth = maxHealth;
+        armor = enemyInfo.HealthStats.armor;
+        fireRes = enemyInfo.HealthStats.fireResistance;
+        iceRes = enemyInfo.HealthStats.iceResistance;
+        electroRes = enemyInfo.HealthStats.electroResistance;
+        elementalShield = enemyInfo.HealthStats.elementalShield;
         //hier andere gekke dingen doen!
     }
 }

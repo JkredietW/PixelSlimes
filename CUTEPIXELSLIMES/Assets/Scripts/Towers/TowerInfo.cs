@@ -29,15 +29,6 @@ public class TowerInfo : ScriptableObject
     public GameObject TowerMesh => towerMesh;
 }
 [Serializable]
-public enum DamageType
-{
-    Physical,
-    Cold,
-    Fire,
-    Electro,
-    Dark,
-}
-[Serializable]
 public enum TargetPriority
 {
     Nearest,

@@ -37,8 +37,8 @@ public class Grid : MonoBehaviour
 
         for (int i = 0; i < gridPoints.Count; i++)
 		{
-            if (GameManager.instance.CheckDistanceNotSquared(raycastPos,clossedPos)>
-                GameManager.instance.CheckDistanceNotSquared(raycastPos, gridPoints[i]))
+            if (FunctionManager.CheckDistanceNotSquared(raycastPos,clossedPos)>
+                FunctionManager.CheckDistanceNotSquared(raycastPos, gridPoints[i]))
 			{
                 clossedPos = gridPoints[i];
             }

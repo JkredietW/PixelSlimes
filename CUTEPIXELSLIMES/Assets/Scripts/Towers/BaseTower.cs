@@ -17,6 +17,8 @@ public class BaseTower : MonoBehaviour
     CapsuleCollider detectionCollider;
     float nextAttack;
 
+    public TowerInfo TowerInfo => towerInfo;
+
     private void Awake()
     {
         targets = new List<EnemyHealth>();

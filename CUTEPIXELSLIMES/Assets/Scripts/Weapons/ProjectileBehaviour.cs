@@ -6,15 +6,15 @@ using PlayerControllerNameSpace;
 public class ProjectileBehaviour : MonoBehaviour
 {
     private GameObject sender;
-    private TowerInfo statSource;
+    private BaseTower statSource;
     public GameObject Sender => sender;
 
-    int pierces;
+    int pierces; // not used yet
 
     public void Setup(GameObject _sender)
     {
         sender = _sender;
-        statSource = _sender.GetComponent<BaseTower>().TowerInfo;
+        statSource = _sender.GetComponent<BaseTower>();
         pierces = 0;// hier data ophalen
     }
 
@@ -28,7 +28,7 @@ public class ProjectileBehaviour : MonoBehaviour
         if(other.GetComponent<EnemyHealth>())
         {
             EnemyHealth health = other.GetComponent<EnemyHealth>();
-            health.DoDamage(statSource.Damage, statSource.DamageType); //damage done may not be base dmg
+            health.DoDamage(statSource.CurrentDamage, statSource.CurrentDamageType);
 
             Destroy(gameObject);
         }

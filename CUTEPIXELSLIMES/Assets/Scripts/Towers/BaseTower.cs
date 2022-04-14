@@ -11,19 +11,29 @@ public class BaseTower : MonoBehaviour
     [SerializeField] private Transform meshHead;
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private LayerMask wallMask;
+    [SerializeField] private List<TowerItem> heldItems;
     private EnemyHealth aimTarget;
     private Vector3 rotation;
     private Vector3 projectileOrigin;
     CapsuleCollider detectionCollider;
     float nextAttack;
+    private float currentDamage;
+    private DamageType currentDamageType;
 
     public TowerInfo TowerInfo => towerInfo;
+
+    public float CurrentDamage => currentDamage;
+    public DamageType CurrentDamageType => currentDamageType;
 
     private void Awake()
     {
         targets = new List<EnemyHealth>();
         detectionCollider = GetComponent<CapsuleCollider>();
         Setup(towerInfo);
+    }
+    private void Start()
+    {
+        heldItems.Add(ItemGenerator.instance.GenerateItem(3));
     }
     private void Update()
     {
@@ -35,6 +45,12 @@ public class BaseTower : MonoBehaviour
         projectileOrigin = towerMesh.ProjectileOrigin.position;
         detectionCollider.radius = info.Range / 2;
         detectionCollider.height = info.Range * 2;
+
+        CalculateDamage();
+    }
+    public void CalculateDamage()
+    {
+
     }
     public void GetTarget()
     {
@@ -214,6 +230,10 @@ public class BaseTower : MonoBehaviour
 
     void LookAtTarget()
     {
+        if(targets.Count < 1)
+        {
+            return;
+        }
         RemoveEmptyObjects();
         aimTarget = FilterTarget();
         if(aimTarget == null)
@@ -231,9 +251,9 @@ public class BaseTower : MonoBehaviour
     }
     void Shoot()
     {
-        GameObject newBullet = Instantiate(bulletPrefab);
+        GameObject newBullet = Instantiate(bulletPrefab, projectileOrigin, Quaternion.LookRotation(transform.forward));
         newBullet.GetComponent<ProjectileBehaviour>().Setup(gameObject);
-        newBullet.transform.rotation = Quaternion.LookRotation(transform.forward);
+        //newBullet.transform.rotation = Quaternion.LookRotation(transform.forward);
         newBullet.GetComponent<Rigidbody>().velocity = newBullet.transform.forward * towerInfo.ProjectileSpeed;
     }
     private void OnDrawGizmos()

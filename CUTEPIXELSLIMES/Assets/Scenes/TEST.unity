@@ -160,6 +160,7 @@ MonoBehaviour:
   wallMask:
     serializedVersion: 2
     m_Bits: 16439
+  heldItems: []
 --- !u!4 &139003144
 Transform:
   m_ObjectHideFlags: 0

@@ -48,6 +48,7 @@ public class TowerItem
 {
     public List<ItemStat> itemStats = new List<ItemStat>();
 }
+[System.Serializable]
 public class ItemStat
 {
     public ItemStats statType;

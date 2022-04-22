@@ -28,10 +28,14 @@ public class GameManager : MonoBehaviour
     {
         currentSelectedTower = currentTower;
         CameraController.instance.SetFocus(currentSelectedTower.gameObject, true);
-        //hier in panel zetten
         towerPanel.SetActive(true);
     }
-    void SetInfoToPanel()
+    public void CloseTowerPanel()
+    {
+        CameraController.instance.SetFocus();
+        towerPanel.SetActive(false);
+    }
+    void SetInfoToPanel()//moet nog
     {
         
     }

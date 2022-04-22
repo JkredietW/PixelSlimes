@@ -13,7 +13,8 @@ namespace PlayerControllerNameSpace
         [SerializeField] InputAction movement;
         [SerializeField] LayerMask towerMask;
         [SerializeField] LayerMask groundMask;
-        private bool buildMode;
+        private SelectionState selectionState;
+        private bool buildMode, UiMode;
         private CharacterController controller => GetComponent<CharacterController>();
         private Mouse mouse => Mouse.current;
         private Vector3 movementDirection;
@@ -47,6 +48,7 @@ namespace PlayerControllerNameSpace
         void ToggleBuildMode(InputAction.CallbackContext callbackContext)
         {
             buildMode = !buildMode;
+            towerBuildingMode = buildMode;
         }
         void Movement(InputAction.CallbackContext callbackContext)
         {
@@ -77,25 +79,49 @@ namespace PlayerControllerNameSpace
         void RayCastFromScreen() //ook nog een ghost wall/tower doen
         {
             Ray _ray = Camera.main.ScreenPointToRay(new Vector3(mouse.position.ReadValue().x, mouse.position.ReadValue().y, 0));
-			if (wallBuildingMode)
-			{
-                if (Physics.Raycast(_ray, out RaycastHit _hit, Mathf.Infinity, towerMask))
-                {
-                    //hier alle possable hits filteren
-                    BaseTower hitTower = _hit.transform.GetComponentInParent<BaseTower>();
-                    print(hitTower);
-                    GameManager.instance.OpenTowerPanel(hitTower);
-                }
-            }
-            else if (towerBuildingMode)
-			{
-                if (Physics.Raycast(_ray, out RaycastHit _hit, Mathf.Infinity, groundMask))
-                {
-                    Grid.instance.GetClossedPoint(_hit.point);
+            switch (selectionState)
+            {
+                case SelectionState.Default:
+                    if (Physics.Raycast(_ray, out RaycastHit _hit, Mathf.Infinity, towerMask))
+                    {
+                        MonoBehaviour hitTower = _hit.transform.GetComponentInParent<MonoBehaviour>();
+                        selectionState = SelectionState.InUi;
 
-
-                }
+                        //hier filteren
+                        if (hitTower.GetComponent<BaseTower>())
+                        {
+                            GameManager.instance.OpenTowerPanel(hitTower as BaseTower);
+                        }
+                        else
+                        {
+                            //als niks is dan niet uimode
+                            selectionState = SelectionState.Default;
+                        }
+                    }
+                    break;
+                case SelectionState.InUi:
+                    if (!UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+                    {
+                        GameManager.instance.CloseTowerPanel();
+                        selectionState = SelectionState.Default;
+                    }
+                    break;
+                case SelectionState.buildMode:
+                    if (wallBuildingMode)
+                    {
+                        if (Physics.Raycast(_ray, out _hit, Mathf.Infinity, groundMask))
+                        {
+                            Grid.instance.GetClossedPoint(_hit.point);
+                        }
+                    }
+                    break;
             }
         }
     }
+}
+public enum SelectionState
+{ 
+    Default,
+    InUi,
+    buildMode,
 }

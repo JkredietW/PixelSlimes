@@ -13,13 +13,16 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Vector3 cameraZoom;
     [SerializeField] private float cameraLerpSpeed;
 
+    private GameObject mainFocus;
+
     private void Awake()
     {
         if(instance == null)
         {
             instance = this;
             DontDestroyOnLoad(this);
-            SetFocus(FindObjectOfType<PlayerController>().gameObject);
+            mainFocus = FindObjectOfType<PlayerController>().gameObject;
+            SetFocus(mainFocus);
         }
         else
         {
@@ -31,9 +34,9 @@ public class CameraController : MonoBehaviour
         FocusOnObject();
     }
 
-    public void SetFocus(GameObject newFoxus, bool needToZoom = false)
+    public void SetFocus(GameObject newFoxus = null, bool needToZoom = false)
     {
-        focus = newFoxus;
+        focus = newFoxus == null ? mainFocus : newFoxus;
         zoomIn = needToZoom;
     }
 

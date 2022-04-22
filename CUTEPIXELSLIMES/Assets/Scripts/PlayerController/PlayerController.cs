@@ -11,12 +11,16 @@ namespace PlayerControllerNameSpace
         [SerializeField] InputAction buildToggle;
         [SerializeField] InputAction leftMouseClick;
         [SerializeField] InputAction movement;
-        [SerializeField] LayerMask InteractMask;
+        [SerializeField] LayerMask towerMask;
+        [SerializeField] LayerMask groundMask;
         private bool buildMode;
         private CharacterController controller => GetComponent<CharacterController>();
         private Mouse mouse => Mouse.current;
         private Vector3 movementDirection;
         public PlayerInfo BaseStats => baseStats;
+        [HideInInspector]
+        public bool wallBuildingMode = false, towerBuildingMode = false;
+
 
         private void Awake()
         {
@@ -70,15 +74,27 @@ namespace PlayerControllerNameSpace
                 //hier attack doen
             }
         }
-        void RayCastFromScreen()
+        void RayCastFromScreen() //ook nog een ghost wall/tower doen
         {
             Ray _ray = Camera.main.ScreenPointToRay(new Vector3(mouse.position.ReadValue().x, mouse.position.ReadValue().y, 0));
-            if (Physics.Raycast(_ray, out RaycastHit _hit, Mathf.Infinity, InteractMask))
-            {
-                //hier alle possable hits filteren
-                BaseTower hitTower = _hit.transform.GetComponentInParent<BaseTower>();
-                print(hitTower);
-                GameManager.instance.OpenTowerPanel(hitTower);
+			if (wallBuildingMode)
+			{
+                if (Physics.Raycast(_ray, out RaycastHit _hit, Mathf.Infinity, towerMask))
+                {
+                    //hier alle possable hits filteren
+                    BaseTower hitTower = _hit.transform.GetComponentInParent<BaseTower>();
+                    print(hitTower);
+                    GameManager.instance.OpenTowerPanel(hitTower);
+                }
+            }
+            else if (towerBuildingMode)
+			{
+                if (Physics.Raycast(_ray, out RaycastHit _hit, Mathf.Infinity, groundMask))
+                {
+                    Grid.instance.GetClossedPoint(_hit.point);
+
+
+                }
             }
         }
     }

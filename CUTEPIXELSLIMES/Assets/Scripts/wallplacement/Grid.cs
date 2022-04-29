@@ -14,13 +14,24 @@ public class Grid : MonoBehaviour
     private List<Vector3> gridPoints;
 
     public float size { get { return sizeDefault; } }
-	private void Start()
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+    private void Start()
 	{
         gridPoints = new List<Vector3>();
         Gizmos.color = Color.magenta;
-        for (float x = -gridSize.x; x < gridSize.x; x += sizeDefault)
+        for (float x = -gridSize.x/2; x < gridSize.x/2; x += sizeDefault)
         {
-            for (float z = -gridSize.y; z < gridSize.y; z += sizeDefault)
+            for (float z = -gridSize.y/2; z < gridSize.y/2; z += sizeDefault)
             {
                 var point = GetNearestPointOnGrid(new Vector3(x, transform.position.y, z));
                 gridPoints.Add(point);
@@ -62,12 +73,12 @@ public class Grid : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.magenta;
-        for (float x = -gridSize.x; x < gridSize.x; x += sizeDefault)
+        for (float x = -gridSize.x /2; x < gridSize.x/ 2; x += sizeDefault)
         {
-            for (float z = -gridSize.y; z < gridSize.y; z += sizeDefault)
+            for (float z = -gridSize.y/2; z < gridSize.y/2; z += sizeDefault)
             {
                 var point = GetNearestPointOnGrid(new Vector3(x, transform.position.y, z));
-                Gizmos.DrawSphere(point, 0.15f);
+                Gizmos.DrawCube(point, new Vector3(.15f, .15f, .15f));
             }
         }
     }

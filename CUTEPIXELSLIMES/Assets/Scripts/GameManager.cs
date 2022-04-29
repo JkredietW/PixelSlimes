@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     [SerializeField] GameObject towerPanel;
+    [SerializeField] GameObject towerShopPanel;
     private BaseTower currentSelectedTower;
     private GameObject playerObject;
 
@@ -16,12 +17,28 @@ public class GameManager : MonoBehaviour
         if(instance == null)
         {
             instance = this;
+            playerObject = PlayerController.instance.gameObject;
             DontDestroyOnLoad(this);
-            playerObject = FindObjectOfType<PlayerControllerNameSpace.PlayerController>().gameObject;
         }
         else
         {
             Destroy(gameObject);
+        }
+    }
+    public void ToggleTowerShop(bool value, bool placingTower = false)
+    {
+        towerShopPanel.SetActive(value);
+        if(placingTower)
+        {
+            PlayerController.instance.SetState(SelectionState.buildMode);
+        }
+        else if(value)
+        {
+            PlayerController.instance.SetState(SelectionState.InUi);
+        }
+        else
+        {
+            PlayerController.instance.SetState(SelectionState.Default);
         }
     }
     public void OpenTowerPanel(BaseTower currentTower)
@@ -35,8 +52,12 @@ public class GameManager : MonoBehaviour
         CameraController.instance.SetFocus();
         towerPanel.SetActive(false);
     }
-    void SetInfoToPanel()//moet nog
+    void SetTowerInfoToPanel()//moet nog, nadat towers stat calculation hebben
     {
         
+    }
+    private void Update()
+    {
+        //print(PlayerController.instance.SelectionState);
     }
 }

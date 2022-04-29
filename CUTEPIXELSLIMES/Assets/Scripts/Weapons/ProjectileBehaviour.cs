@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using PlayerControllerNameSpace;
 
 public class ProjectileBehaviour : MonoBehaviour
 {
@@ -24,7 +23,6 @@ public class ProjectileBehaviour : MonoBehaviour
         {
             return;
         }
-        print(other);
         if(other.GetComponent<EnemyHealth>())
         {
             EnemyHealth health = other.GetComponent<EnemyHealth>();

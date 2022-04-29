@@ -19,25 +19,30 @@ public class BaseTower : MonoBehaviour
     float nextAttack;
     private float currentDamage;
     private DamageType currentDamageType;
+    private bool isDummyTower = true;
 
     public TowerInfo TowerInfo => towerInfo;
 
     public float CurrentDamage => currentDamage;
     public DamageType CurrentDamageType => currentDamageType;
 
-    private void Awake()
-    {
-        targets = new List<EnemyHealth>();
-        detectionCollider = GetComponent<CapsuleCollider>();
-        Setup(towerInfo);
-    }
     private void Start()
     {
         heldItems.Add(ItemGenerator.instance.GenerateItem(3));
     }
     private void Update()
     {
-        LookAtTarget();
+        if(!isDummyTower)
+        {
+            LookAtTarget();
+        }
+    }
+    public void PlaceTower(bool dummy = false)
+    {
+        isDummyTower = dummy;
+        targets = new List<EnemyHealth>();
+        detectionCollider = GetComponent<CapsuleCollider>();
+        Setup(towerInfo);
     }
     void Setup(TowerInfo info)
     {
@@ -55,7 +60,6 @@ public class BaseTower : MonoBehaviour
     public void GetTarget()
     {
         RemoveEmptyObjects();
-
     }
     void RemoveEmptyObjects()
     {
@@ -66,6 +70,9 @@ public class BaseTower : MonoBehaviour
 
     protected void OnTriggerEnter(Collider _target)
     {
+        if (isDummyTower)
+            return;
+
         EnemyHealth newTarget = _target.GetComponent<EnemyHealth>();
 
         if(!CheckIfTargetIsAvailable(newTarget))
@@ -79,6 +86,9 @@ public class BaseTower : MonoBehaviour
     }
     protected void OnTriggerExit(Collider _target)
     {
+        if (isDummyTower)
+            return;
+
         EnemyHealth newTarget = _target.GetComponent<EnemyHealth>();
 
         if (CheckIfTargetIsAvailable(newTarget))

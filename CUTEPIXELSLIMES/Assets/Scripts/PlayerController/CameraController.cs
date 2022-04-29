@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using PlayerControllerNameSpace;
 
 public class CameraController : MonoBehaviour
 {
@@ -21,7 +20,7 @@ public class CameraController : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(this);
-            mainFocus = FindObjectOfType<PlayerController>().gameObject;
+            mainFocus = PlayerController.instance.gameObject;
             SetFocus(mainFocus);
         }
         else

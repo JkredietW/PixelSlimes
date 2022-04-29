@@ -381,9 +381,7 @@ MonoBehaviour:
     m_Bits: 512
   groundMask:
     serializedVersion: 2
-    m_Bits: 16384
-  wallBuildingMode: 0
-  towerBuildingMode: 0
+    m_Bits: 1
 --- !u!143 &8252814608177648652
 CharacterController:
   m_ObjectHideFlags: 0

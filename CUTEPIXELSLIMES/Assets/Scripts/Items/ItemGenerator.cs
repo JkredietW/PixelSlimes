@@ -31,7 +31,6 @@ public class ItemGenerator : MonoBehaviour
             newStat.Setup((ItemStats)rollStatType, rollStatValue);
 
             newItem.itemStats.Add(newStat);
-            print($"type: {newItem.itemStats[i].statType}; value: {newItem.itemStats[i].amount}");
         }
         return newItem;
     }

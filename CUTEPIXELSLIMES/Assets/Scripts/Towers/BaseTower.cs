@@ -18,39 +18,85 @@ public class BaseTower : MonoBehaviour
     CapsuleCollider detectionCollider;
     float nextAttack;
     private float currentDamage;
+    private float attackSpeed;
     private DamageType currentDamageType;
 
     public TowerInfo TowerInfo => towerInfo;
 
     public float CurrentDamage => currentDamage;
+    public float AttackSpeed => attackSpeed;
+    public int HeldItemsCount => heldItems.Count;
     public DamageType CurrentDamageType => currentDamageType;
 
     private void Awake()
     {
         targets = new List<EnemyHealth>();
         detectionCollider = GetComponent<CapsuleCollider>();
-        Setup(towerInfo);
-    }
-    private void Start()
-    {
-        heldItems.Add(ItemGenerator.instance.GenerateItem(3));
+        GrandItem(ItemGenerator.instance.GenerateItem(3));
+        Setup();
     }
     private void Update()
     {
         LookAtTarget();
     }
-    void Setup(TowerInfo info)
+    public void GrandItem(TowerItem newItem)
     {
-        TowerModelInfo towerMesh = Instantiate(info.TowerMesh, MeshParent).GetComponent<TowerModelInfo>();
+        heldItems.Add(newItem);
+        CalculateDamage();
+    }
+    public void RemoveHeldItem(int indexNumber)
+    {
+        heldItems.RemoveAt(indexNumber);
+        heldItems.RemoveAll(item => item == null);
+        CalculateDamage();
+    }
+    void Setup()
+    {
+        TowerModelInfo towerMesh = Instantiate(towerInfo.TowerMesh, MeshParent).GetComponent<TowerModelInfo>();
         projectileOrigin = towerMesh.ProjectileOrigin.position;
-        detectionCollider.radius = info.Range / 2;
-        detectionCollider.height = info.Range * 2;
+        detectionCollider.radius = towerInfo.Range / 2;
+        detectionCollider.height = towerInfo.Range * 2;
 
         CalculateDamage();
+        print(attackSpeed);
+        print(currentDamage);
     }
     public void CalculateDamage()
     {
-
+        currentDamage = towerInfo.Damage;
+        attackSpeed = towerInfo.AttackSpeed;
+        //flat
+        for (int i = 0; i < heldItems.Count; i++)
+        {
+            foreach (ItemStat stat in heldItems[i].itemStats)
+            {
+                switch(stat.statType)
+                {
+                    case ItemStats.DamageFlat:
+                        currentDamage += stat.amount;
+                        break;
+                    case ItemStats.AttackSpeedFlat:
+                        attackSpeed += stat.amount;
+                        break;
+                }
+            }
+        }
+        //%
+        for (int i = 0; i < heldItems.Count; i++)
+        {
+            foreach (ItemStat stat in heldItems[i].itemStats)
+            {
+                switch (stat.statType)
+                {
+                    case ItemStats.DamagePercentage: //deze moet later
+                        currentDamage *=  1 + stat.amount;
+                        break;
+                    case ItemStats.AttackSpeedPercentage:
+                        attackSpeed *= 1 + stat.amount;
+                        break;
+                }
+            }
+        }
     }
     public void GetTarget()
     {
@@ -245,7 +291,7 @@ public class BaseTower : MonoBehaviour
 
         if (Time.time > nextAttack)
         {
-            nextAttack = (1 / towerInfo.AttackSpeed) + Time.time;
+            nextAttack = (1 / attackSpeed) + Time.time;
             Shoot();
         }
     }

@@ -24,7 +24,6 @@ public class ProjectileBehaviour : MonoBehaviour
         {
             return;
         }
-        print(other);
         if(other.GetComponent<EnemyHealth>())
         {
             EnemyHealth health = other.GetComponent<EnemyHealth>();

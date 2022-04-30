@@ -20,6 +20,7 @@ public class BaseTower : MonoBehaviour
     private float currentDamage;
     private float attackSpeed;
     private DamageType currentDamageType;
+    bool isDummyTower;
 
     public TowerInfo TowerInfo => towerInfo;
 
@@ -37,7 +38,17 @@ public class BaseTower : MonoBehaviour
     }
     private void Update()
     {
-        LookAtTarget();
+        if (!isDummyTower)
+        {
+            LookAtTarget();
+        }
+    }
+    public void PlaceTower(bool dummy = false)
+    {
+        isDummyTower = dummy;
+        targets = new List<EnemyHealth>();
+        detectionCollider = GetComponent<CapsuleCollider>();
+        Setup();
     }
     public void GrandItem(TowerItem newItem)
     {
@@ -112,6 +123,8 @@ public class BaseTower : MonoBehaviour
 
     protected void OnTriggerEnter(Collider _target)
     {
+        if (isDummyTower)
+            return;
         EnemyHealth newTarget = _target.GetComponent<EnemyHealth>();
 
         if(!CheckIfTargetIsAvailable(newTarget))
@@ -125,6 +138,8 @@ public class BaseTower : MonoBehaviour
     }
     protected void OnTriggerExit(Collider _target)
     {
+        if (isDummyTower)
+            return;
         EnemyHealth newTarget = _target.GetComponent<EnemyHealth>();
 
         if (CheckIfTargetIsAvailable(newTarget))

@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     [SerializeField] GameObject towerPanel;
     [SerializeField] GameObject towerShopPanel;
-    private BaseTower currentSelectedTower;
+    [HideInInspector] public BaseTower currentSelectedTower;
     private GameObject playerObject;
 
     public GameObject PlayerObject => playerObject;
@@ -46,18 +47,21 @@ public class GameManager : MonoBehaviour
         currentSelectedTower = currentTower;
         CameraController.instance.SetFocus(currentSelectedTower.gameObject, true);
         towerPanel.SetActive(true);
+        GetComponent<TowerInfoPanel>().OnOpenPanel();
     }
     public void CloseTowerPanel()
     {
         CameraController.instance.SetFocus();
         towerPanel.SetActive(false);
     }
-    void SetTowerInfoToPanel()//moet nog, nadat towers stat calculation hebben
-    {
-        
-    }
     private void Update()
     {
         //print(PlayerController.instance.SelectionState);
     }
+}
+[System.Serializable]
+public class StatUiBox
+{
+    public List<TextMeshProUGUI> statTextObjects;
+    public List<string> statName;
 }

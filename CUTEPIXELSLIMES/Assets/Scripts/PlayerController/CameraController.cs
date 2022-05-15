@@ -19,7 +19,6 @@ public class CameraController : MonoBehaviour
         if(instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(this);
             mainFocus = PlayerController.instance.gameObject;
             SetFocus(mainFocus);
         }

@@ -11,7 +11,7 @@ public class BaseTower : MonoBehaviour
     [SerializeField] private Transform meshHead;
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private LayerMask wallMask;
-    [SerializeField] private List<TowerItem> heldItems;
+    [SerializeField] public List<TowerItem> heldItems;
     private EnemyHealth aimTarget;
     private Vector3 rotation;
     private Vector3 projectileOrigin;
@@ -19,13 +19,15 @@ public class BaseTower : MonoBehaviour
     float nextAttack;
     private float currentDamage;
     private float attackSpeed;
-    private DamageType currentDamageType;
+    private DamageType currentDamageType; //moet nog op bullets gedaan worden?
     bool isDummyTower;
 
     public TowerInfo TowerInfo => towerInfo;
 
     public float CurrentDamage => currentDamage;
     public float AttackSpeed => attackSpeed;
+    public float RotationSpeed => towerInfo.RotationSpeed;
+    public float TowerRange => towerInfo.Range;
     public int HeldItemsCount => heldItems.Count;
     public DamageType CurrentDamageType => currentDamageType;
 
@@ -33,6 +35,8 @@ public class BaseTower : MonoBehaviour
     {
         targets = new List<EnemyHealth>();
         detectionCollider = GetComponent<CapsuleCollider>();
+        GrandItem(ItemGenerator.instance.GenerateItem(3));
+        GrandItem(ItemGenerator.instance.GenerateItem(3));
         GrandItem(ItemGenerator.instance.GenerateItem(3));
         Setup();
     }
@@ -55,7 +59,7 @@ public class BaseTower : MonoBehaviour
         heldItems.Add(newItem);
         CalculateDamage();
     }
-    public void RemoveHeldItem(int indexNumber)
+    void RemoveHeldItem(int indexNumber)
     {
         heldItems.RemoveAt(indexNumber);
         heldItems.RemoveAll(item => item == null);
@@ -69,8 +73,16 @@ public class BaseTower : MonoBehaviour
         detectionCollider.height = towerInfo.Range * 2;
 
         CalculateDamage();
-        print(attackSpeed);
-        print(currentDamage);
+    }
+    public void RemoveItem(string removedId)
+    {
+        for (int i = 0; i < heldItems.Count; i++)
+        {
+            if (heldItems[i].ID == removedId)
+            {
+                RemoveHeldItem(i);
+            }
+        }
     }
     public void CalculateDamage()
     {
@@ -112,7 +124,6 @@ public class BaseTower : MonoBehaviour
     public void GetTarget()
     {
         RemoveEmptyObjects();
-
     }
     void RemoveEmptyObjects()
     {
